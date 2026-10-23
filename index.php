@@ -149,18 +149,16 @@ if($key != -1){
                     $bot->trasfer($CHAT_ID,34);
                 } */
 
-                // asigna la negociación y transfiere el chat a un usuario aleatorio de la lista
-                $usuarios = array(96, 1848, 34507, 77235, 77233, 92789, 110265, 110263, 110261);
-                $usuario = $usuarios[array_rand($usuarios)];
+                // asigna la negociación a MoreClix y deja el chat en la cola de la línea para que lo tome un operador
+                $usuario = 156; // MoreClix
                 changeResponsable($dealid, $usuario);
                 if(!empty($idcontact)){
                     changeResponsableContact($idcontact, $usuario);
                 }
-                $resp = $bot->transferUser($CHAT_ID, $usuario);
-                writeToLog(array('usuario' => $usuario, 'respuesta' => $resp), 'transfer aleatorio');
+                $bot->botleave($CHAT_ID , $bot_id);
+                writeToLog(array('usuario' => $usuario), 'asignado a MoreClix');
             //  writeToLog("user", 'user');
-            // $bot->botleave($CHAT_ID , $bot_id);
-            }    
+            }
         }else{
             writeToLog("source2", 'key');
             /*$pipeline = getPipeline($dealid);
