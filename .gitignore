@@ -1,0 +1,33 @@
+# Logs
+*.log
+*.log.*
+*.log.gz
+
+# Archivos temporales y caché
+*.tmp
+*.temp
+*.cache
+cache/
+tmp/
+
+# Archivos de respaldo
+*.bak
+*.backup
+*.old
+*.zip
+*.tar
+*.tar.gz
+
+# Variables de entorno y credenciales
+.env
+.env.*
+!.env.example
+
+# Archivos de configuración local
+config.local.php
+
+# Archivos del sistema y editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
