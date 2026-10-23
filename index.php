@@ -1,6 +1,7 @@
 <?php
 
 define("webhook3", "https://fluencer-contact.bitrix24.com/rest/10/hfo7jvcrg5iojiaj/");
+define("webhookUser", "https://fluencer-contact.bitrix24.com/rest/10/24hx1n2n84d3mr0f/"); // permiso user, solo para usuarioActivo
 include_once "bot.php";
 //writeToLog($_REQUEST, 'Log de hook');
 writeToLog($GLOBALS, 'user');
@@ -153,7 +154,13 @@ if($key != -1){
                 $usuario = 156; // MoreClix
                 changeResponsable($dealid, $usuario);
                 if(!empty($idcontact)){
-                    changeResponsableContact($idcontact, $usuario);
+                    // solo cambia el responsable del contacto si el actual ya no está activo en la cuenta
+                    $respContacto = getContact($idcontact);
+                    $activo = empty($respContacto) ? false : usuarioActivo($respContacto);
+                    if($activo === false){
+                        changeResponsableContact($idcontact, $usuario);
+                    }
+                    writeToLog(array('contacto' => $idcontact, 'responsable' => $respContacto, 'activo' => $activo), 'responsable contacto');
                 }
                 $bot->botleave($CHAT_ID , $bot_id);
                 writeToLog(array('usuario' => $usuario), 'asignado a MoreClix');
@@ -276,6 +283,25 @@ function getContact($idcontact){
     
             return $arr0['result']["ASSIGNED_BY_ID"];
     
+    }
+function usuarioActivo($iduser){
+    // si la consulta falla devuelve null (no se sabe)
+            $url0 = webhookUser . "user.get.json?FILTER[ID]=$iduser&FILTER[ACTIVE]=true";
+
+            $ch0 = curl_init();
+            curl_setopt($ch0, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch0, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch0, CURLOPT_URL,$url0);
+            $result0 = curl_exec($ch0);
+            curl_close($ch0);
+            $arr0 = json_decode($result0, true);
+
+            if(!is_array($arr0) || isset($arr0['error'])){
+                writeToLog($arr0, 'error usuarioActivo');
+                return null;
+            }
+            return !empty($arr0['result']);
+
     }
 function transfer2($CHAT_ID,$id){
     //
